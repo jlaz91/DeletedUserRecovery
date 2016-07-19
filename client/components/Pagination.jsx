@@ -16,21 +16,25 @@ export default class Pagination extends Component {
   }
 
   render() {
-    let rows=[];
-    let numPages = Users.find({}).count() / 5;
+    //let rows=[];
+    //let numPages = Users.find({}).count() / 5;
     const leftArrow = "<";
     const rightArrow = ">";
-    
+
+    /*
     rows.push(<a className="item" key='0'>{leftArrow}</a>);
     for(i=1; i<numPages+1; i++) {
       rows.push(<a className="item" key={i}>{i}</a>);
     }
     rows.push(<a className="item" key={numPages+1}>{rightArrow}</a>);
+    */
 
     return (
       <div className="ui pagination menu">
-        {rows}
+        <a className="item" onClick={() => RECORDS_PER_PAGE-=1}>{leftArrow}</a>
+        <a className="item" onClick={() => RECORDS_PER_PAGE+=1}>{rightArrow}</a>
       </div>
+
     );
   }
 }

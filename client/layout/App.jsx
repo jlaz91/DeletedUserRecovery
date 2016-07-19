@@ -1,15 +1,28 @@
 import React, { Component, PropTypes } from 'react';
 import { createContainer } from 'meteor/react-meteor-data';
 
+import Menu from '../components/Menu.jsx'
 import User from '../components/User.jsx';
 import AuthToken from '../components/AuthToken.jsx';
 import Pagination from '../components/Pagination.jsx';
 import { Users } from '/imports/collections/users.js';
 
+const RECORDS_PER_PAGE = 100;
+const startAt = 0;
+const pageNumber = new ReactiveVar(1);
+
 class App extends Component {
 
   constructor(props){
     super(props);
+  }
+
+  componentDidMount() {
+    $(window).scroll(function() {
+      if($(window).scrollTop() + $(window).height() > $(document).height() - 100) {
+        pageNumber.set(pageNumber.get() + 1);
+      }
+    });
   }
 
   selectAll(event) {
@@ -38,22 +51,20 @@ class App extends Component {
   }
 
   render() {
+    const leftArrow = "<";
+    const rightArrow = ">";
+
     return (
       <div>
-        <div className="ui fixed top panel" id="header">
-          <div className="ui borderless main inverted blue secondary menu" id="main-menu">
-            <div className="ui container">
-              <div className="header item">
-              <img className="logo" src="/images/logo.png" />
-              Deleted User Recovery Tool
-              </div>
-            </div>
-          </div>
-        </div>
+        <Menu />
         <div className="ui left aligned container">
           <AuthToken />
           <div className="ui divider"></div>
-          <Pagination />
+            {/*}
+            <div className="ui pagination menu">
+              <button className="item" onClick={this.loadMore.bind(this)}>{leftArrow}</button>
+              <button className="item" >{rightArrow}</button>
+            </div>*/}
           <table className="ui compact selectable definition table">
             <thead>
               <tr>
@@ -84,7 +95,8 @@ App.propTypes = {
 };
 
 export default createContainer(() => {
+  Meteor.subscribe('users', RECORDS_PER_PAGE * pageNumber.get(), startAt);
   return {
-    users: Users.find({}).fetch(),
+    users: Users.find({}, {sort: {_id: -1}}).fetch(),
   };
 }, App);
