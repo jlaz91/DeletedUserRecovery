@@ -1,0 +1,38 @@
+/* CSS declarations go here */
+#header {
+  width: 100%;
+  margin-bottom: 40px;
+}
+.ui.menu .item img.logo {
+  margin-right: 1.5em;
+}
+.main.container {
+  margin-top: 7em;
+}
+.logo {
+  margin-right: 3em;
+}
+
+.wrap {
+    width: 352px;
+}
+
+.wrap table {
+    width: 300px;
+    table-layout: fixed;
+}
+
+table tr td {
+    padding: 5px;
+    width: 100px;
+    word-wrap: break-word;
+}
+
+.inner_table {
+    height: 100px;
+    overflow-y: auto;
+}
+
+.checked {
+  background: #ECECEC;
+}
