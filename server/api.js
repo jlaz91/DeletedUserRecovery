@@ -15,13 +15,15 @@ Meteor.methods({
     const result = HTTP.call("POST", "https://api.dropboxapi.com/2/team/members/list", {
       headers: headersConst,
       data: {
-        "limit": 100
+        "include_removed": true,
       }
     });
     const response = result.content.replace(/\.tag/g,'tag');
     users = JSON.parse(response);
 
     users.members.map((user) => {
+      //if(user.profile.status.tag == "removed") {
+        console.log(user.profile.status.tag);
       Users.insert(user);
     });
   },

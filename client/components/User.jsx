@@ -24,8 +24,15 @@ export default class User extends Component {
           <label></label>
           </div>
         </td>
-        <td className="collapsing">{this.props.user.profile.name.display_name}</td>
+        <td className="collapsing">
+          {this.props.user.profile.name.display_name}
+        </td>
         <td className="collapsing">{this.props.user.profile.email}</td>
+        <td className="collapsing">
+          <div className="content">
+            <i className="minus circle icon"></i>
+          </div>
+        </td>
       </tr>
     );
   }

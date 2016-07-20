@@ -3,13 +3,13 @@ import ReactDOM from 'react-dom';
 
 export default class AuthToken extends Component {
 
-  /*componentDidMount() {
+  componentDidMount() {
   $('.circle.icon')
     .popup({
       inline : true,
       hoverable : true
     });
-  }*/
+  }
 
   handleAuth(event) {
     const token = ReactDOM.findDOMNode(this.refs.textInput).value.trim();

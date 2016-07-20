@@ -4,11 +4,9 @@ import { createContainer } from 'meteor/react-meteor-data';
 import Menu from '../components/Menu.jsx'
 import User from '../components/User.jsx';
 import AuthToken from '../components/AuthToken.jsx';
-import Pagination from '../components/Pagination.jsx';
 import { Users } from '/imports/collections/users.js';
 
-const RECORDS_PER_PAGE = 100;
-const startAt = 0;
+const RECORDS_PER_PAGE = 15;
 const pageNumber = new ReactiveVar(1);
 
 class App extends Component {
@@ -27,21 +25,12 @@ class App extends Component {
 
   selectAll(event) {
     event.preventDefault();
-    this.props.users.map((user) => {
-      Users.update(user._id, {
-        $set: { checked: true },
-      })
-    });
-    console.log(this.props.users[0].profile.email);
+    Meteor.call('users.selectAll');
   }
 
   deSelectAll(event) {
     event.preventDefault();
-    this.props.users.map((user) => {
-      Users.update(user._id, {
-        $set: { checked: false},
-      })
-    });
+    Meteor.call('users.deSelectAll');
   }
 
   renderUsers() {
@@ -57,31 +46,29 @@ class App extends Component {
     return (
       <div>
         <Menu />
+        <br/><br/><br/><br/>
         <div className="ui left aligned container">
           <AuthToken />
           <div className="ui divider"></div>
-            {/*}
-            <div className="ui pagination menu">
-              <button className="item" onClick={this.loadMore.bind(this)}>{leftArrow}</button>
-              <button className="item" >{rightArrow}</button>
-            </div>*/}
+          <div className="ui segment">
+          <button className="ui secondary button" onClick={this.selectAll.bind(this)}>
+            Select all</button>
+          <button className="ui button" onClick={this.deSelectAll.bind(this)}>
+            Deselect all</button>
           <table className="ui compact selectable definition table">
             <thead>
               <tr>
                 <th></th>
                 <th>Name</th>
                 <th>Email</th>
+                <th>Status</th>
               </tr>
             </thead>
             <tbody>
               {this.renderUsers()}
             </tbody>
           </table>
-          <button className="ui secondary button" onClick={this.selectAll.bind(this)}>
-            Select all</button>
-          <button className="ui button" onClick={this.deSelectAll.bind(this)}>
-            Deselect all</button>
-          <button className="ui primary button" type="submit">Restore selected</button>
+          </div>
           <br/><br/>
         </div>
       </div>
@@ -90,12 +77,11 @@ class App extends Component {
 }
 
 App.propTypes = {
-  users: PropTypes.array.isRequired,
-  //currentPage: React.PropTypes.Number
+  //users: PropTypes.array.isRequired,
 };
 
 export default createContainer(() => {
-  Meteor.subscribe('users', RECORDS_PER_PAGE * pageNumber.get(), startAt);
+  Meteor.subscribe('users', RECORDS_PER_PAGE * pageNumber.get());
   return {
     users: Users.find({}, {sort: {_id: -1}}).fetch(),
   };

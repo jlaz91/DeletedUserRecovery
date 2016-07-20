@@ -36,3 +36,11 @@ table tr td {
 .checked {
   background: #ECECEC;
 }
+
+.restore {
+  width: 100%;
+}
+
+.selectbtn {
+  width: 50%;
+}
