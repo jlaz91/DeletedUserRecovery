@@ -19,7 +19,7 @@ export default class User extends Component {
             <input type="checkbox"
               readOnly
               checked={this.props.user.checked}
-              onClick={this.toggleChecked.bind(this)}
+              onChange={this.toggleChecked.bind(this)}
             />
           <label></label>
           </div>

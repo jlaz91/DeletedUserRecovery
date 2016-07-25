@@ -6,7 +6,7 @@ import User from '../components/User.jsx';
 import AuthToken from '../components/AuthToken.jsx';
 import { Users } from '/imports/collections/users.js';
 
-const RECORDS_PER_PAGE = 15;
+const RECORDS_PER_PAGE = 100;
 const pageNumber = new ReactiveVar(1);
 
 class App extends Component {
@@ -40,12 +40,10 @@ class App extends Component {
   }
 
   render() {
-    const leftArrow = "<";
-    const rightArrow = ">";
 
     return (
       <div>
-        <Menu />
+        <Menu checkedCount={this.props.checkedCount} />
         <br/><br/><br/><br/>
         <div className="ui left aligned container">
           <AuthToken />
@@ -77,12 +75,13 @@ class App extends Component {
 }
 
 App.propTypes = {
-  //users: PropTypes.array.isRequired,
+   users: PropTypes.array.isRequired,
 };
 
 export default createContainer(() => {
   Meteor.subscribe('users', RECORDS_PER_PAGE * pageNumber.get());
   return {
     users: Users.find({}, {sort: {_id: -1}}).fetch(),
+    checkedCount: Users.find({checked: true}).count(),
   };
 }, App);
