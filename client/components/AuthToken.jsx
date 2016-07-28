@@ -25,7 +25,6 @@ export default class AuthToken extends Component {
     let promise = Meteor.callPromise('getMembers');
 
     promise.catch(function(error) {
-      console.log(error);
       $(".negative.message").transition('slide down');
         setTimeout(function() {
       $(".negative.message").transition('slide down');

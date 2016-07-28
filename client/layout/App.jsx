@@ -43,7 +43,7 @@ class App extends Component {
 
     return (
       <div>
-        <Menu checkedCount={this.props.checkedCount} />
+        <Menu checkedCount={this.props.checkedCount} users={this.props.users} />
         <br/><br/><br/><br/>
         <div className="ui left aligned container">
           <AuthToken />
