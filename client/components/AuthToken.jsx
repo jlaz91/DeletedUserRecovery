@@ -1,11 +1,12 @@
 import React, { Component, PropTypes } from 'react';
+import { createContainer } from 'meteor/react-meteor-data'
 import ReactDOM from 'react-dom';
 
 export default class AuthToken extends Component {
 
   constructor(props) {
     super(props);
-    this.state = {error_message: ''};
+    this.state = {error_message: props.error_message};
   }
 
   componentDidMount() {
@@ -25,18 +26,48 @@ export default class AuthToken extends Component {
     let promise = Meteor.callPromise('getMembers');
 
     promise.catch(function(error) {
-      $(".negative.message").transition('slide down');
+      if(error.error == 'no-token') {
+        $(".badToken.message").transition('slide down');
         setTimeout(function() {
-      $(".negative.message").transition('slide down');
-      }, 4000);
+          $(".badToken.message").transition('slide down');
+        }, 4000);
+      } else if (error.error == 'no-recoverable-users'){
+        $(".noRecoverable.message").transition('slide down');
+        setTimeout(function() {
+          $(".noRecoverable.message").transition('slide down');
+        }, 4000);
+      } else {
+        $(".unknown.message").transition('slide down');
+        setTimeout(function() {
+          $(".unknown.message").transition('slide down');
+        }, 4000);
+      }
     });
   }
 
-  renderMessage() {
+  badTokenMessage() {
     return(
-      <div className="ui center aligned hidden negative message">
+      <div className="ui center aligned hidden negative badToken message">
         <div className="header">Error</div>
-        <p>Please check that you are using the correct access token.</p>
+        <p>Please check that you are using a valid token.</p>
+      </div>
+    )
+  }
+
+  noRecoverableMessage() {
+    return(
+      <div className="ui center aligned hidden negative noRecoverable message">
+        <div className="header">No recoverable users.</div>
+        <p>Users are only recoverable within 7 days.</p>
+      </div>
+    )
+  }
+
+  unknownMessage() {
+    return(
+      <div className="ui center aligned hidden negative unknown message">
+        <div className="header">Unknown error</div>
+        <p>Please check your network connection.</p>
       </div>
     )
   }
@@ -44,7 +75,9 @@ export default class AuthToken extends Component {
   render() {
     return(
       <div>
-        {this.renderMessage()}
+        {this.badTokenMessage()}
+        {this.noRecoverableMessage()}
+        {this.unknownMessage()}
         <div className="ui container">
           <h2>Recover Deleted Users</h2>
           <form className="ui form" onSubmit={this.handleAuth.bind(this)}>
@@ -67,4 +100,12 @@ export default class AuthToken extends Component {
       </div>
     );
   }
+}
+
+AuthToken.propTypes = {
+  error_message: PropTypes.string.isRequired,
+};
+
+AuthToken.defaultProps = {
+  error_message: ''
 }

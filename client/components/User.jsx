@@ -19,7 +19,7 @@ export default class User extends Component {
             <input type="checkbox"
               readOnly
               checked={this.props.user.checked}
-              onChange={this.toggleChecked.bind(this)}
+              onClick={this.toggleChecked.bind(this)}
             />
           <label></label>
           </div>
@@ -30,7 +30,7 @@ export default class User extends Component {
         <td className="collapsing">{this.props.user.profile.email}</td>
         <td className="collapsing">
           <div className="content">
-            <i className="minus circle icon"></i>
+            <i className={this.props.user.status='deleted' ? 'minus circle icon' : 'check circle icon'}></i>
           </div>
         </td>
       </tr>

@@ -6,7 +6,7 @@ import User from '../components/User.jsx';
 import AuthToken from '../components/AuthToken.jsx';
 import { Users } from '/imports/collections/users.js';
 
-const RECORDS_PER_PAGE = 100;
+const RECORDS_PER_PAGE = 1;
 const pageNumber = new ReactiveVar(1);
 
 class App extends Component {
@@ -46,7 +46,7 @@ class App extends Component {
         <Menu checkedCount={this.props.checkedCount} users={this.props.users} />
         <br/><br/><br/><br/>
         <div className="ui left aligned container">
-          <AuthToken />
+          <AuthToken message={this.props.message} />
           <div className="ui divider"></div>
           <div className="ui segment">
           <button className="ui secondary button" onClick={this.selectAll.bind(this)}>
@@ -76,6 +76,7 @@ class App extends Component {
 
 App.propTypes = {
    users: PropTypes.array.isRequired,
+   error_message: React.PropTypes.string,
 };
 
 export default createContainer(() => {

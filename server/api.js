@@ -23,14 +23,15 @@ Meteor.methods({
       if (user.profile.status.is_recoverable) {
         recoverableCount += 1;
         user.checked = false;
+        user.status = 'deleted';
         Users.insert(user);
       }
     });
 
-    if (recoverableCount == 0) {
-      return throwError('no-recoverable-users', 'No users.');
-    } else if(users.has_more) {
+    if(users.has_more) {
       Meteor.call('getMoreMembers', users.cursor);
+    } else if (recoverableCount == 0) {
+      return throwError('no-recoverable-users', 'No users.');
     } else {
       return true;
     }
@@ -47,13 +48,15 @@ Meteor.methods({
         }
       });
       Meteor.call('storeMembers', result);
-      //return true;
 
     } catch(e) {
-      if ( e.statusCode == 400 ) {
+      if (e.error == 'no-recoverable-users') {
+        return throwError('no-recoverable-users', 'No users.');
+      }
+      else if ( e.response.statusCode == 400 ) {
         return throwError('no-token', 'Invalid token.');
       } else {
-        return throwError('unknown', 'Unknown error.');
+        return throwError('unknown', 'Unknown error.')
       }
     }
 

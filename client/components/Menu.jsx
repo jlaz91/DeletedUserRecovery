@@ -16,7 +16,7 @@ export default class Menu extends Component {
             Deleted User Recovery Tool
             </div>
             <div className="right header item">
-              <button className="ui inverted button" type="submit" onClick={this.restoreSelected.bind(this)}>Restore selected ({this.props.checkedCount})</button>
+              <button className="ui inverted button" type="submit" onClick={this.restoreSelected.bind(this)}>Restore selected</button>
             </div>
           </div>
         </div>
