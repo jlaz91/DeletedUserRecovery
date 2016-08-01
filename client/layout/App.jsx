@@ -6,7 +6,7 @@ import User from '../components/User.jsx';
 import AuthToken from '../components/AuthToken.jsx';
 import { Users } from '/imports/collections/users.js';
 
-const RECORDS_PER_PAGE = 1;
+const RECORDS_PER_PAGE = 100;
 const pageNumber = new ReactiveVar(1);
 
 class App extends Component {

@@ -23,7 +23,7 @@ Meteor.methods({
       if (user.profile.status.is_recoverable) {
         recoverableCount += 1;
         user.checked = false;
-        user.status = 'deleted';
+        user.recovered = false;
         Users.insert(user);
       }
     });
@@ -56,7 +56,7 @@ Meteor.methods({
       else if ( e.response.statusCode == 400 ) {
         return throwError('no-token', 'Invalid token.');
       } else {
-        return throwError('unknown', 'Unknown error.')
+        return throwError('unknown', 'Unknown error.');
       }
     }
 
@@ -90,13 +90,20 @@ Meteor.methods({
               }
             }
           });
+          Users.update(user._id, {
+            $set: { recovered: true },
+          });
+
           console.log("Recovered " + userEmail);
 
         } catch(e) {
-          console.log(e.content);
+          console.log(e);
+          return throwError('user-not-recovered', userEmail + 'could not be recovered.');
         }
       }
     });
+    return throwError('all-users-recovered', 'Selected users were recovered successfully.');
+
   },
 
 });

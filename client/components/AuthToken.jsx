@@ -35,7 +35,7 @@ export default class AuthToken extends Component {
         $(".noRecoverable.message").transition('slide down');
         setTimeout(function() {
           $(".noRecoverable.message").transition('slide down');
-        }, 4000);
+        }, 7000);
       } else {
         $(".unknown.message").transition('slide down');
         setTimeout(function() {
@@ -58,7 +58,7 @@ export default class AuthToken extends Component {
     return(
       <div className="ui center aligned hidden negative noRecoverable message">
         <div className="header">No recoverable users.</div>
-        <p>Users are only recoverable within 7 days.</p>
+        <p>You can only restore users within 7 days. Please contact support.</p>
       </div>
     )
   }
@@ -72,9 +72,39 @@ export default class AuthToken extends Component {
     )
   }
 
+  allUsersRecoveredMessage() {
+    return(
+      <div className="ui center aligned hidden positive success message">
+        <div className="header">Success!</div>
+        <p>All selected users were recovered.</p>
+      </div>
+    )
+  }
+
+  recoveryFailedMessage() {
+    return(
+      <div className="ui center aligned hidden negative recoveryFailed message">
+        <div className="header">Recovery failed</div>
+        <p>Please contact support for help.</p>
+      </div>
+    )
+  }
+
+  exceptionMessage() {
+    return(
+      <div className="ui center aligned hidden negative exception message">
+        <div className="header">Unknown error</div>
+        <p>An unknown error occurred.</p>
+      </div>
+    )
+  }
+
   render() {
     return(
       <div>
+        {this.allUsersRecoveredMessage()}
+        {this.recoveryFailedMessage()}
+        {this.exceptionMessage()}
         {this.badTokenMessage()}
         {this.noRecoverableMessage()}
         {this.unknownMessage()}

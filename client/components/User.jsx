@@ -30,7 +30,7 @@ export default class User extends Component {
         <td className="collapsing">{this.props.user.profile.email}</td>
         <td className="collapsing">
           <div className="content">
-            <i className={this.props.user.status='deleted' ? 'minus circle icon' : 'check circle icon'}></i>
+            <i className={this.props.user.recovered ? 'check circle icon' : 'minus circle icon'}></i>
           </div>
         </td>
       </tr>

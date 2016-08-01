@@ -3,7 +3,25 @@ import React, { Component } from 'react';
 export default class Menu extends Component {
 
   restoreSelected() {
-    Meteor.call('recoverMembers');
+    let promise = Meteor.callPromise('recoverMembers');
+    promise.catch(function(error) {
+      if(error.error == 'users-not-recovered') {
+        $(".recoveryFailed.message").transition('slide down');
+        setTimeout(function() {
+          $(".recovered.message").transition('slide down');
+        }, 4000);
+      } else if (error.error == 'all-users-recovered') {
+        $(".success.message").transition('slide down');
+        setTimeout(function() {
+          $(".success.message").transition('slide down');
+        }, 4000);
+      } else {
+        $(".exception.message").transition('slide down');
+        setTimeout(function() {
+          $(".exception.message").transition('slide down');
+        }, 4000);
+      }
+    });
   }
 
   render() {
