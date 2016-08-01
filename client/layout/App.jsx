@@ -82,7 +82,7 @@ App.propTypes = {
 export default createContainer(() => {
   Meteor.subscribe('users', RECORDS_PER_PAGE * pageNumber.get());
   return {
-    users: Users.find({}, {sort: {_id: -1}}).fetch(),
+    users: Users.find({}, {sort: {recovered: -1}}).fetch(),
     checkedCount: Users.find({checked: true}).count(),
   };
 }, App);
