@@ -3,6 +3,14 @@ import { Users } from '/imports/collections/users.js';
 
 export default class User extends Component {
 
+  componentDidUpdate() {
+  $('.circle.icon')
+    .popup({
+      inline : true,
+      hoverable : true
+    });
+  }
+
   toggleChecked() {
     Users.update(this.props.user._id, {
       $set: { checked: !this.props.user.checked },
@@ -30,7 +38,9 @@ export default class User extends Component {
         <td className="collapsing">{this.props.user.profile.email}</td>
         <td className="collapsing">
           <div className="content">
-            <i className={this.props.user.recovered ? 'check circle icon' : 'minus circle icon'}></i>
+            <i className={this.props.user.recovered ? 'check circle icon' : 'minus circle icon'}
+              data-content={this.props.user.recovered ? 'Recovered!' : 'Deleted'}
+              data-variation="inverted wide"></i>
           </div>
         </td>
       </tr>

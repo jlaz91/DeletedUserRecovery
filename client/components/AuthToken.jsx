@@ -99,6 +99,15 @@ export default class AuthToken extends Component {
     )
   }
 
+  noneMessage() {
+    return(
+      <div className="ui center aligned hidden negative none message">
+        <div className="header">No users selected</div>
+        <p>Please choose the users you would like to restore.</p>
+      </div>
+    )
+  }
+
   render() {
     return(
       <div>
@@ -108,6 +117,7 @@ export default class AuthToken extends Component {
         {this.badTokenMessage()}
         {this.noRecoverableMessage()}
         {this.unknownMessage()}
+        {this.noneMessage()}
         <div className="ui container">
           <h2>Recover Deleted Users</h2>
           <form className="ui form" onSubmit={this.handleAuth.bind(this)}>

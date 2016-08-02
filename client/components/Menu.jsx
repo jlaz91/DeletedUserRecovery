@@ -24,6 +24,13 @@ export default class Menu extends Component {
     });
   }
 
+  noneSelected() {
+    $(".none.message").transition('slide down');
+    setTimeout(function() {
+      $(".none.message").transition('slide down');
+    }, 4000);
+  }
+
   render() {
     return (
       <div className="ui fixed top panel attached sticky" id="header">
@@ -34,7 +41,9 @@ export default class Menu extends Component {
             Deleted User Recovery Tool
             </div>
             <div className="right header item">
-              <button className="ui inverted button" type="submit" onClick={this.restoreSelected.bind(this)}>Restore selected</button>
+              <button className="ui inverted button" type="submit" onClick={
+                  this.props.checkedCount ? this.restoreSelected.bind(this) :
+                  this.noneSelected.bind(this)}>Restore selected</button>
             </div>
           </div>
         </div>
