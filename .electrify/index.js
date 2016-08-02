@@ -15,7 +15,6 @@ app.on('ready', function() {
       width: 1200, height: 900,
       'node-integration': false // node integration must to be off
     });
-    window.openDevTools();
 
     // open up meteor root url
     window.loadURL(meteor_root_url);
