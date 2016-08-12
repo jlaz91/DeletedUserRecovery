@@ -1,12 +1,13 @@
 import React, { Component, PropTypes } from 'react';
 import { createContainer } from 'meteor/react-meteor-data'
+import { Users } from '/imports/collections/users.js';
+
 import ReactDOM from 'react-dom';
 
 export default class AuthToken extends Component {
 
   constructor(props) {
     super(props);
-    this.state = {error_message: props.error_message};
   }
 
   componentDidMount() {
@@ -19,27 +20,21 @@ export default class AuthToken extends Component {
 
   handleAuth(event) {
     event.preventDefault();
+    $(".loadTime.message").transition('slide down');
     Meteor.call('clearMembers');
     const token = ReactDOM.findDOMNode(this.refs.textInput).value.trim();
     Meteor.call('setToken', token);
 
     let promise = Meteor.callPromise('getMembers');
 
-    promise.catch(function(error) {
+    promise.then(()=> {
+      $(".loadTime.message").transition('slide down');
+    }).catch(function(error) {
+      $(".loadTime.message").transition('slide down');
       if(error.error == 'no-token') {
         $(".badToken.message").transition('slide down');
         setTimeout(function() {
           $(".badToken.message").transition('slide down');
-        }, 4000);
-      } else if (error.error == 'no-recoverable-users'){
-        $(".noRecoverable.message").transition('slide down');
-        setTimeout(function() {
-          $(".noRecoverable.message").transition('slide down');
-        }, 7000);
-      } else {
-        $(".unknown.message").transition('slide down');
-        setTimeout(function() {
-          $(".unknown.message").transition('slide down');
         }, 4000);
       }
     });
@@ -99,6 +94,20 @@ export default class AuthToken extends Component {
     )
   }
 
+  loadTimeMessage() {
+    return(
+      <div className="ui center aligned hidden icon loadTime message">
+        <i className="notched circle loading icon"></i>
+        <div className="content">
+          <div className="header">
+            Searching for recoverable users
+          </div>
+          <p>Please note users are only recoverable within 7 days of deletion.</p>
+        </div>
+      </div>
+    )
+  }
+
   noneMessage() {
     return(
       <div className="ui center aligned hidden negative none message">
@@ -111,6 +120,7 @@ export default class AuthToken extends Component {
   render() {
     return(
       <div>
+        {this.loadTimeMessage()}
         {this.allUsersRecoveredMessage()}
         {this.recoveryFailedMessage()}
         {this.exceptionMessage()}
@@ -140,12 +150,4 @@ export default class AuthToken extends Component {
       </div>
     );
   }
-}
-
-AuthToken.propTypes = {
-  error_message: PropTypes.string.isRequired,
-};
-
-AuthToken.defaultProps = {
-  error_message: ''
 }

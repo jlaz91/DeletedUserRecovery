@@ -22,6 +22,6 @@ juliancwirko:postcss
 react-meteor-data
 blaze-html-templates@1.0.4
 http@1.2.8
-aldeed:simple-schema
 deanius:promise
+aldeed:simple-schema
 arboleya:electrify

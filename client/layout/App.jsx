@@ -6,8 +6,7 @@ import User from '../components/User.jsx';
 import AuthToken from '../components/AuthToken.jsx';
 import { Users } from '/imports/collections/users.js';
 
-const RECORDS_PER_PAGE = 100;
-const pageNumber = new ReactiveVar(1);
+const pageNumber = new ReactiveVar(0);
 
 class App extends Component {
 
@@ -15,58 +14,89 @@ class App extends Component {
     super(props);
   }
 
-  componentDidMount() {
-    $(window).scroll(function() {
-      if($(window).scrollTop() + $(window).height() > $(document).height() - 100) {
-        pageNumber.set(pageNumber.get() + 1);
-      }
-    });
+  loadPrevious() {
+    if (pageNumber.get() >= 20) {
+      pageNumber.set(pageNumber.get() - 20);
+    }
+  }
+
+  loadNext() {
+    if (this.props.users.length > 0) {
+      pageNumber.set(pageNumber.get() + 20);
+    }
   }
 
   selectAll(event) {
     event.preventDefault();
-    Meteor.call('users.selectAll');
+    Meteor.call('users.selectAll', this.props.users);
   }
 
   deSelectAll(event) {
     event.preventDefault();
-    Meteor.call('users.deSelectAll');
+    Meteor.call('users.deSelectAll', this.props.users);
   }
 
   renderUsers() {
-    return this.props.users.map((user) => (
-      <User key={user._id} user={user} />
-    ));
+    if(!this.props.loading){
+      return this.props.users.map((user) => (
+        <User key={user._id} user={user} />
+      ));
+    } else {
+      return (
+        <tr>
+            <div className="ui active inverted dimmer">
+              <div className="ui medium text loader">Loading</div>
+            </div>
+            <p></p>
+        </tr>
+      );
+    }
   }
 
   render() {
+    const loadNextClass = (this.props.users.length > 0) ?
+    "ui blue left floated button" : "ui blue left floated disabled button";
+    const loadPreviousClass = (pageNumber.get() < 20) ?
+    "ui blue left floated disabled button" : "ui blue left floated button";
 
     return (
       <div>
         <Menu checkedCount={this.props.checkedCount} users={this.props.users} />
         <br/><br/><br/><br/>
         <div className="ui left aligned container">
-          <AuthToken message={this.props.message} />
+          <AuthToken checkedCount={this.props.checkedCount} />
           <div className="ui divider"></div>
-          <div className="ui segment">
-          <button className="ui secondary button" onClick={this.selectAll.bind(this)}>
-            Select all</button>
-          <button className="ui button" onClick={this.deSelectAll.bind(this)}>
-            Deselect all</button>
-          <table className="ui compact selectable definition table">
-            <thead>
-              <tr>
-                <th></th>
-                <th>Name</th>
-                <th>Email</th>
-                <th>Status</th>
-              </tr>
-            </thead>
-            <tbody>
-              {this.renderUsers()}
-            </tbody>
-          </table>
-          </div>
+            <div className="ui segment">
+              <div>
+                <button className="ui secondary button" onClick={this.selectAll.bind(this)}>
+                  Select all</button>
+                <button className="ui button" onClick={this.deSelectAll.bind(this)}>
+                  Deselect all</button>
+              </div>
+              <br/>
+              <div>
+                <button className={loadPreviousClass} onClick={this.loadPrevious.bind(this)}>
+                  <i className="left arrow icon"></i>
+                </button>
+                <button className={loadNextClass} onClick={this.loadNext.bind(this)}>
+                  <i className="right arrow icon"></i>
+                </button>
+              </div>
+              <br/><br/>
+              <table className="ui compact selectable definition table">
+                <thead>
+                  <tr>
+                    <th></th>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {this.renderUsers()}
+                </tbody>
+              </table>
+            </div>
           <br/><br/>
         </div>
       </div>
@@ -76,13 +106,16 @@ class App extends Component {
 
 App.propTypes = {
    users: PropTypes.array.isRequired,
-   error_message: React.PropTypes.string,
 };
 
 export default createContainer(() => {
-  Meteor.subscribe('users', RECORDS_PER_PAGE * pageNumber.get());
+  const subHandle = Meteor.subscribe('users', pageNumber.get());
+  const loading = !subHandle.ready();
+  const users = Users.find().fetch();
+  const checkedCount = Users.find({checked: true}).count();
   return {
-    users: Users.find({}, {sort: {recovered: -1}}).fetch(),
-    checkedCount: Users.find({checked: true}).count(),
+    loading,
+    users,
+    checkedCount
   };
 }, App);

@@ -4,6 +4,7 @@ export default class Menu extends Component {
 
   restoreSelected() {
     let promise = Meteor.callPromise('recoverMembers');
+
     promise.catch(function(error) {
       if(error.error == 'users-not-recovered') {
         $(".recoveryFailed.message").transition('slide down');
@@ -38,7 +39,9 @@ export default class Menu extends Component {
           <div className="ui container">
             <div className="header item">
             <img className="logo" src="/images/logo.png" />
-            Deleted User Recovery Tool
+              <a className="item">
+                Deleted User Recovery Tool
+              </a>
             </div>
             <div className="right header item">
               <button className="ui inverted button" type="submit" onClick={

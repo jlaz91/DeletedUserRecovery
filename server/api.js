@@ -1,8 +1,11 @@
 import { Users } from '/imports/collections/users.js';
 
+let UID = 0;
 const headersConst = {
   'Content-Type': 'application/json'
 };
+
+const userList = [];
 
 Meteor.methods({
   clearMembers: function() {
@@ -10,36 +13,35 @@ Meteor.methods({
   },
 
   setToken: function(token) {
-    console.log(token);
     headersConst.Authorization = "Bearer " + token;
   },
 
   storeMembers: function(result) {
     const response = result.content.replace(/\.tag/g,'tag');
     users = JSON.parse(response);
-    let recoverableCount = 0;
 
     users.members.map((user) => {
       if (user.profile.status.is_recoverable) {
-        recoverableCount += 1;
+        user.UID = UID;
         user.checked = false;
         user.recovered = false;
-        Users.insert(user);
+        userList.push(user);
+        UID+=1;
       }
     });
 
     if(users.has_more) {
       Meteor.call('getMoreMembers', users.cursor);
-    } else if (recoverableCount == 0) {
-      return throwError('no-recoverable-users', 'No users.');
     } else {
-      return true;
+      for (i = 0; i < userList.length; i++) {
+        Users.insert(userList[i]);
+      }
     }
-
   },
 
   getMembers: function() {
     // Calling Dropbox events API
+    UID = 0;
     try {
       const result = HTTP.call("POST", "https://api.dropboxapi.com/2/team/members/list", {
         headers: headersConst,
@@ -50,13 +52,8 @@ Meteor.methods({
       Meteor.call('storeMembers', result);
 
     } catch(e) {
-      if (e.error == 'no-recoverable-users') {
-        return throwError('no-recoverable-users', 'No users.');
-      }
-      else if ( e.response.statusCode == 400 ) {
+      if ( e.response.statusCode == 400 ) {
         return throwError('no-token', 'Invalid token.');
-      } else {
-        return throwError('unknown', 'Unknown error.');
       }
     }
 
@@ -78,7 +75,6 @@ Meteor.methods({
       if (user.checked) {
         let memberID = user.profile.team_member_id;
         let userEmail = user.profile.email;
-        console.log("Recovering: " + userEmail);
 
         try {
           const result = HTTP.call("POST", 'https://api.dropboxapi.com/2/team/members/recover', {
@@ -94,10 +90,7 @@ Meteor.methods({
             $set: { recovered: true },
           });
 
-          console.log("Recovered " + userEmail);
-
         } catch(e) {
-          console.log(e);
           return throwError('user-not-recovered', userEmail + 'could not be recovered.');
         }
       }

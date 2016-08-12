@@ -3,21 +3,21 @@ import { Mongo } from 'meteor/mongo';
 export const Users = new Mongo.Collection('users');
 
 if (Meteor.isServer) {
-  Meteor.publish('users', (limit) => {
-    new SimpleSchema({
-      limit: {type: Number},
-    }).validate({limit});
-
-    return Users.find({}, {limit: limit});
+  Meteor.publish('users', (start) => {
+    return Users.find({ UID: {$gte: start} }, {sort: {recovered: -1}, limit: 20});
   });
 }
 
 Meteor.methods({
-  'users.selectAll'() {
-    Users.update({}, { $set: {checked: true}}, {multi: true});
+  'users.selectAll'(users) {
+    users.map((user) => {
+      Users.update(user._id, { $set: {checked: true}});
+    });
   },
 
-  'users.deSelectAll'() {
-    Users.update({}, { $set : {checked: false}}, {multi: true});
+  'users.deSelectAll'(users) {
+    users.map((user) => {
+      Users.update(user._id, { $set: {checked: false}});
+    });
   }
 });
