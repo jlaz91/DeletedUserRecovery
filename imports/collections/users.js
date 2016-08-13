@@ -9,15 +9,11 @@ if (Meteor.isServer) {
 }
 
 Meteor.methods({
-  'users.selectAll'(users) {
-    users.map((user) => {
-      Users.update(user._id, { $set: {checked: true}});
-    });
+  'users.selectAll'() {
+    Users.update({}, { $set: {checked: true}}, {multi: true});
   },
 
-  'users.deSelectAll'(users) {
-    users.map((user) => {
-      Users.update(user._id, { $set: {checked: false}});
-    });
+  'users.deSelectAll'() {
+    Users.update({}, { $set : {checked: false}}, {multi: true});
   }
 });

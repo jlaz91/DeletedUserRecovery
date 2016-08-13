@@ -28,12 +28,12 @@ class App extends Component {
 
   selectAll(event) {
     event.preventDefault();
-    Meteor.call('users.selectAll', this.props.users);
+    Meteor.call('users.selectAll');
   }
 
   deSelectAll(event) {
     event.preventDefault();
-    Meteor.call('users.deSelectAll', this.props.users);
+    Meteor.call('users.deSelectAll');
   }
 
   renderUsers() {
