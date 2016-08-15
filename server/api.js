@@ -5,10 +5,11 @@ const headersConst = {
   'Content-Type': 'application/json'
 };
 
-const userList = [];
+let userList = [];
 
 Meteor.methods({
   clearMembers: function() {
+    userList = [];
     Users.remove({});
   },
 
@@ -17,7 +18,7 @@ Meteor.methods({
   },
 
   storeMembers: function(result) {
-    const response = result.content.replace(/\.tag/g,'tag');
+    let response = result.content.replace(/\.tag/g,'tag');
     users = JSON.parse(response);
 
     users.members.map((user) => {
@@ -25,6 +26,7 @@ Meteor.methods({
         user.UID = UID;
         user.checked = false;
         user.recovered = false;
+        user.recovering = false
         userList.push(user);
         UID+=1;
       }
@@ -43,7 +45,7 @@ Meteor.methods({
     // Calling Dropbox events API
     UID = 0;
     try {
-      const result = HTTP.call("POST", "https://api.dropboxapi.com/2/team/members/list", {
+      let result = HTTP.call("POST", "https://api.dropboxapi.com/2/team/members/list", {
         headers: headersConst,
         data: {
           "include_removed": true,
@@ -60,7 +62,7 @@ Meteor.methods({
   },
 
   getMoreMembers: function(cursor) {
-    const result = HTTP.call("POST", "https://api.dropboxapi.com/2/team/members/list/continue", {
+    let result = HTTP.call("POST", "https://api.dropboxapi.com/2/team/members/list/continue", {
       headers: headersConst,
       data: {
         "cursor": cursor,
@@ -72,12 +74,14 @@ Meteor.methods({
 
   recoverMembers: function() {
     Users.find().forEach( function(user) {
-      if (user.checked) {
+      if (user.checked && !user.recovered) {
         let memberID = user.profile.team_member_id;
         let userEmail = user.profile.email;
-
+        Users.update(user._id, {
+          $set: { recovering: true },
+        });
         try {
-          const result = HTTP.call("POST", 'https://api.dropboxapi.com/2/team/members/recover', {
+          let result = HTTP.call("POST", 'https://api.dropboxapi.com/2/team/members/recover', {
             headers: headersConst,
             data: {
               "user": {
@@ -89,7 +93,6 @@ Meteor.methods({
           Users.update(user._id, {
             $set: { recovered: true },
           });
-
         } catch(e) {
           return throwError('user-not-recovered', userEmail + 'could not be recovered.');
         }

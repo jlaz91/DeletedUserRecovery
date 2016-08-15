@@ -44,10 +44,12 @@ class App extends Component {
     } else {
       return (
         <tr>
+          <td>
             <div className="ui active inverted dimmer">
               <div className="ui medium text loader">Loading</div>
             </div>
             <p></p>
+          </td>
         </tr>
       );
     }

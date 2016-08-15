@@ -20,8 +20,8 @@ export default class AuthToken extends Component {
 
   handleAuth(event) {
     event.preventDefault();
-    $(".loadTime.message").transition('slide down');
     Meteor.call('clearMembers');
+    $(".loadTime.message").transition('slide down');
     const token = ReactDOM.findDOMNode(this.refs.textInput).value.trim();
     Meteor.call('setToken', token);
 

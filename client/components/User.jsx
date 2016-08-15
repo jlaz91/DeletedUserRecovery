@@ -44,8 +44,8 @@ export default class User extends Component {
         <td className="collapsing">{this.props.user.profile.email}</td>
         <td className="collapsing">
           <div className="content">
-            <i className={this.props.user.recovered ? 'check circle icon green' : 'minus circle icon red'}
-              data-content={this.props.user.recovered ? 'Recovered!' : 'Deleted'}
+            <i className={!this.props.user.recovering ? 'minus circle icon red' : 'refresh icon blue'}
+              data-content={!this.props.user.recovering ? 'Deleted' : 'Recovering...'}
               data-variation="inverted wide"></i>
           </div>
         </td>
