@@ -2,7 +2,8 @@ import { Users } from '/imports/collections/users.js';
 
 let UID = 0;
 const headersConst = {
-  'Content-Type': 'application/json'
+  'Content-Type': 'application/json',
+  'User-Agent': 'DeletedUserRecoveryTool-macOS'
 };
 
 let userList = [];
@@ -51,6 +52,7 @@ Meteor.methods({
           "include_removed": true,
         }
       });
+      console.log(result);
       Meteor.call('storeMembers', result);
 
     } catch(e) {
